@@ -35,6 +35,8 @@ const curve = new TravelTimeCurve(TRAVEL_TIME_TABLE);
  * or null while it has not yet surfaced or once it is past the 100° travel-time table.
  * Both screens use the IASP91 first-arrival curves at the catalog depth: the model the
  * stations' arrival flags come from, so a front reaches each station as its flag appears.
+ *
+ * @internal Exported for unit tests; not part of the application API.
  */
 export function frontRadiusKm(event: SeismicEventSummary, phase: Phase, seconds: number): number | null {
   const degrees = curve.distanceForTime(phase, seconds, event.depthKm);
