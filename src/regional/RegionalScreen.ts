@@ -26,7 +26,7 @@ export class RegionalScreen extends Screen<RegionalModel, RegionalScreenView> {
   public constructor(options: RegionalScreenOptions) {
     super(
       // Model factory — called once when the screen is first shown
-      () => new RegionalModel(),
+      () => new RegionalModel(options.tandem.createTandem("model")),
       // View factory — receives the model instance
       (model) =>
         new RegionalScreenView(model, {

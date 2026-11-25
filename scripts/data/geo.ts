@@ -4,7 +4,6 @@ const EARTH_RADIUS_KM = 6371.0;
 export type LonLat = readonly [number, number];
 
 const DEG_TO_RAD = Math.PI / 180;
-const RAD_TO_DEG = 180 / Math.PI;
 
 // ── Simplification ────────────────────────────────────────────────────────────
 
@@ -56,18 +55,11 @@ export function simplify(points: readonly LonLat[], tolerance: number): LonLat[]
 // ── Spherical math ────────────────────────────────────────────────────────────
 
 /** Unit vector (ECEF, x through 0°E/0°N, z through the north pole). */
-export function toUnitVector(lon: number, lat: number): [number, number, number] {
+function toUnitVector(lon: number, lat: number): [number, number, number] {
   const phi = lat * DEG_TO_RAD;
   const lambda = lon * DEG_TO_RAD;
   const cosPhi = Math.cos(phi);
   return [cosPhi * Math.cos(lambda), cosPhi * Math.sin(lambda), Math.sin(phi)];
-}
-
-/** Inverse of {@link toUnitVector}. */
-export function toLonLat(v: readonly [number, number, number]): LonLat {
-  const [x, y, z] = v;
-  const length = Math.hypot(x, y, z);
-  return [Math.atan2(y, x) * RAD_TO_DEG, Math.asin(z / length) * RAD_TO_DEG];
 }
 
 function cross(a: readonly [number, number, number], b: readonly [number, number, number]): [number, number, number] {

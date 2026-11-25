@@ -26,7 +26,7 @@ export class GlobalScreen extends Screen<GlobalModel, GlobalScreenView> {
   public constructor(options: GlobalScreenOptions) {
     super(
       // Model factory — called once when the screen is first shown
-      () => new GlobalModel(),
+      () => new GlobalModel(options.tandem.createTandem("model")),
       // View factory — receives the model instance
       (model) =>
         new GlobalScreenView(model, {
