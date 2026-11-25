@@ -29,7 +29,7 @@ Physics, data provenance and non-claims are in [`doc/model.md`](doc/model.md). A
 | `src/common/model/DistanceRule.ts` | `d = Δt·vP·vS/(vP − vS)` and its inverse |
 | `src/common/model/TravelTimeCurve.ts` | IASP91 table interpolation and S–P inversion |
 | `src/common/model/locateEpicenter.ts` | Least-squares epicenter on the sphere |
-| `src/common/model/geodesy.ts` | Great-circle distance, destination point, small circles |
+| `src/common/model/geodesy.ts` | Great-circle distance, destination point, azimuth |
 | `src/common/view/LabScreenLayout.ts` | Shared layout and parallel-DOM order for both screens |
 | `src/common/view/SeismogramStackNode.ts` | Rows, shared time axis, zoom / pan / fit |
 | `src/common/view/SeismogramRowNode.ts` | One trace (min/max envelope), readout, theoretical ticks |

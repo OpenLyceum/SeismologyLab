@@ -33,37 +33,3 @@ export function azimuthDeg(from: LonLat, to: LonLat): number {
   const x = Math.cos(first) * Math.sin(second) - Math.sin(first) * Math.cos(second) * Math.cos(delta);
   return (Math.atan2(y, x) / RAD + 360) % 360;
 }
-
-/** Split a sampled circle at the map seam, closing each resulting piece along the seam. */
-export function smallCircle(center: LonLat, radiusKm: number, segments = 180): LonLat[][] {
-  const first = destinationPoint(center, 0, radiusKm);
-  const pieces = [[first]];
-  let previous = first;
-  let piece = pieces[0] as LonLat[];
-  for (let index = 1; index <= segments; index++) {
-    const point = index === segments ? first : destinationPoint(center, (360 * index) / segments, radiusKm);
-    const delta = point[0] - previous[0];
-    if (Math.abs(delta) > 180) {
-      const edge = delta < 0 ? 180 : -180;
-      const fraction = (edge - previous[0]) / (delta + 2 * edge);
-      const latitude = previous[1] + (point[1] - previous[1]) * fraction;
-      piece.push([edge, latitude]);
-      piece = [[-edge, latitude]];
-      pieces.push(piece);
-    }
-    piece.push(point);
-    previous = point;
-  }
-
-  if (pieces.length > 1) {
-    const tail = pieces.pop();
-    const head = pieces[0];
-    if (tail && head) {
-      head.unshift(...tail.slice(0, -1));
-    }
-  }
-  return pieces.map((points) => {
-    const start = points[0];
-    return start && start !== points.at(-1) ? [...points, start] : points;
-  });
-}
