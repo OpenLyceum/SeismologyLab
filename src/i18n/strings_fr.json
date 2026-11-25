@@ -1,6 +1,7 @@
 {
   "title": "Laboratoire de sismologie",
   "screens": {
+    "waves": "Ondes",
     "regional": "Régional",
     "global": "Mondial"
   },
@@ -36,9 +37,35 @@
     "sCurve": "S",
     "sMinusPCurve": "S–P",
     "pMarker": "P",
-    "sMarker": "S"
+    "sMarker": "S",
+    "loading": "Chargement des sismogrammes…",
+    "loadFailed": "Impossible de charger ces sismogrammes. Choisissez un autre séisme ou rechargez la page.",
+    "waves": {
+      "autoPause": "Pause à chaque arrivée P",
+      "restart": "Rejouer",
+      "clock": "{{time}} s après le séisme",
+      "pFront": "Onde P",
+      "sFront": "Onde S",
+      "arrivalChartTitle": "Temps d’arrivée selon la distance",
+      "arrivalChartTime": "Temps d’arrivée (s)",
+      "arrivalChartKm": "Distance à l’épicentre (km)",
+      "arrivalChartDegrees": "Distance à l’épicentre (°)",
+      "sMinusPGap": "S–P",
+      "epicenter": "Épicentre"
+    }
   },
   "a11y": {
+    "waves": {
+      "screenSummary": {
+        "playArea": "La zone de jeu rejoue un vrai séisme. Sur la carte, l’onde P puis l’onde S, plus lente, s’éloignent de l’épicentre. À côté de la carte, le sismogramme de chaque station se trace à mesure que les ondes arrivent, et un graphique place chaque temps d’arrivée selon la distance de la station.",
+        "controlArea": "La zone de contrôle permet de choisir un séisme, de lancer, mettre en pause ou avancer pas à pas la reprise, d’en changer la vitesse, d’activer ou non la pause à chaque arrivée P, de rejouer depuis le début et de réinitialiser.",
+        "interactionHint": "Appuyez sur Lecture et observez l’écart entre les arrivées P et S croître avec la distance à l’épicentre."
+      },
+      "currentDetails": "{{time}} secondes après le séisme. L’onde P a atteint {{p}} stations sur {{total}} et l’onde S {{s}}.",
+      "pArrival": "L’onde P atteint la station {{station}}, à {{distance}} kilomètres, {{time}} secondes après le séisme.",
+      "sArrival": "L’onde S atteint la station {{station}}, {{interval}} secondes après l’onde P.",
+      "timeControlsHelp": "Lancez, mettez en pause ou avancez la reprise pas à pas."
+    },
     "regional": {
       "screenSummary": {
         "playArea": "La zone de jeu montre six sismogrammes réels de stations proches d’un séisme, empilés par station, et une carte des stations. Chaque sismogramme porte un marqueur d’arrivée P et un marqueur S.",

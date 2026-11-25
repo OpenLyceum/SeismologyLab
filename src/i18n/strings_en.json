@@ -1,6 +1,7 @@
 {
   "title": "Seismology Lab",
   "screens": {
+    "waves": "Waves",
     "regional": "Regional",
     "global": "Global"
   },
@@ -36,9 +37,35 @@
     "sCurve": "S",
     "sMinusPCurve": "S–P",
     "pMarker": "P",
-    "sMarker": "S"
+    "sMarker": "S",
+    "loading": "Loading seismograms…",
+    "loadFailed": "These seismograms could not be loaded. Choose another earthquake or reload.",
+    "waves": {
+      "autoPause": "Pause at each P arrival",
+      "restart": "Replay",
+      "clock": "{{time}} s after the earthquake",
+      "pFront": "P wave",
+      "sFront": "S wave",
+      "arrivalChartTitle": "Arrival time vs distance",
+      "arrivalChartTime": "Arrival time (s)",
+      "arrivalChartKm": "Distance from epicenter (km)",
+      "arrivalChartDegrees": "Distance from epicenter (°)",
+      "sMinusPGap": "S–P",
+      "epicenter": "Epicenter"
+    }
   },
   "a11y": {
+    "waves": {
+      "screenSummary": {
+        "playArea": "The play area replays a real earthquake. On the map, the P wave and then the slower S wave spread out from the epicenter. Beside the map, each station's seismogram draws in as the waves arrive, and a chart plots each arrival time against the station's distance.",
+        "controlArea": "The control area lets you choose an earthquake, play, pause or step the replay, change its speed, turn the pause at each P arrival on or off, replay from the start, and reset.",
+        "interactionHint": "Press Play and watch the gap between the P and S arrivals grow with distance from the epicenter."
+      },
+      "currentDetails": "{{time}} seconds after the earthquake. The P wave has reached {{p}} of {{total}} stations and the S wave {{s}}.",
+      "pArrival": "P wave reaches station {{station}}, {{distance}} kilometres away, {{time}} seconds after the earthquake.",
+      "sArrival": "S wave reaches station {{station}}, {{interval}} seconds after the P wave.",
+      "timeControlsHelp": "Play, pause, or step the replay forward."
+    },
     "regional": {
       "screenSummary": {
         "playArea": "The play area shows six real seismograms from stations near an earthquake, stacked by station, and a map of the stations. Each seismogram has a P and an S arrival marker.",

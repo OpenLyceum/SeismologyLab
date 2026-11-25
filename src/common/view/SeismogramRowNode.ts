@@ -19,55 +19,7 @@ import type { StationRecord } from "../model/StationRecord.js";
 import { fillPattern, formatDegrees, formatKm, formatSeconds, niceTimeSpacing } from "./format.js";
 import { PickMarkerNode } from "./PickMarkerNode.js";
 import { BOLD_LABEL_FONT, SMALL_FONT } from "./SeismologyLabFonts.js";
-
-/** Largest |sample| in a channel, so each trace fills its row. */
-function peakOf(samples: Float32Array): number {
-  let peak = 0;
-  for (const value of samples) {
-    peak = Math.max(peak, Math.abs(value));
-  }
-  return peak > 0 ? peak : 1;
-}
-
-/** Min/max envelope per pixel column, so long records draw quickly at any zoom. */
-function envelopeShape(
-  samples: Float32Array,
-  sampleRate: number,
-  startSeconds: number,
-  window: Range,
-  transform: ChartTransform,
-  peak: number,
-): Shape {
-  const shape = new Shape();
-  const columns = STACK.CHART_WIDTH;
-  const secondsPerColumn = window.getLength() / columns;
-  let started = false;
-  for (let column = 0; column < columns; column++) {
-    const t0 = window.min + column * secondsPerColumn;
-    const first = Math.max(0, Math.floor((t0 - startSeconds) * sampleRate));
-    const last = Math.min(samples.length - 1, Math.ceil((t0 + secondsPerColumn - startSeconds) * sampleRate));
-    if (last < 0 || first > samples.length - 1 || last < first) {
-      continue;
-    }
-    let low = Number.POSITIVE_INFINITY;
-    let high = Number.NEGATIVE_INFINITY;
-    for (let index = first; index <= last; index++) {
-      const value = (samples[index] ?? 0) / peak;
-      low = Math.min(low, value);
-      high = Math.max(high, value);
-    }
-    const yLow = transform.modelToViewY(low);
-    const yHigh = transform.modelToViewY(high);
-    if (started) {
-      shape.lineTo(column, yHigh);
-    } else {
-      shape.moveTo(column, yHigh);
-      started = true;
-    }
-    shape.lineTo(column, yLow);
-  }
-  return shape;
-}
+import { columnEnvelope, envelopePath, peakOf } from "./traceShapes.js";
 
 export class SeismogramRowNode extends Node {
   private readonly disposeRow: () => void;
@@ -239,14 +191,15 @@ export class SeismogramRowNode extends Node {
       transform.setModelXRange(window.copy());
       grid.setSpacing(niceTimeSpacing(window.getLength()));
       const horizontal = model.showHorizontalProperty.value;
-      trace.shape = envelopeShape(
+      const envelope = columnEnvelope(
         horizontal ? record.horizontal : record.vertical,
         data.sampleRate,
         data.startSeconds,
         window,
-        transform,
+        STACK.CHART_WIDTH,
         horizontal ? horizontalPeak : verticalPeak,
       );
+      trace.shape = envelopePath(envelope, (value) => transform.modelToViewY(value));
       channelText.string = horizontal ? data.horizontalChannel : data.verticalChannel;
       channelText.left = 0;
       channelText.top = nameText.bottom + 2;

@@ -11,7 +11,8 @@ import {
   VP_RANGE,
   VS_RANGE,
 } from "../../SeismologyLabConstants.js";
-import type { ScreenKind, SeismicEventData } from "../data/dataTypes.js";
+import type { ScreenKind, SeismicEventData, SeismicEventSummary } from "../data/dataTypes.js";
+import { loadEvent, loadedEvent, stationsByDistance } from "../data/eventLibrary.js";
 import { TRAVEL_TIME_TABLE } from "../data/generated/travelTimeData.js";
 import { GlobalDistanceModel, RegionalDistanceModel } from "./DistanceModel.js";
 import { greatCircleKm, type LonLat } from "./geodesy.js";
@@ -24,8 +25,12 @@ type BestFit = ReturnType<typeof locateEpicenter>;
 
 export class SeismologyLabModel {
   public readonly kind: ScreenKind;
-  public readonly events: readonly SeismicEventData[];
-  public readonly eventProperty: Property<SeismicEventData>;
+  public readonly events: readonly SeismicEventSummary[];
+  public readonly eventProperty: Property<SeismicEventSummary>;
+  /** True while the chosen event's waveforms are being fetched. */
+  public readonly loadingProperty = new BooleanProperty(false);
+  /** True when the chosen event's waveforms could not be loaded. */
+  public readonly loadFailedProperty = new BooleanProperty(false);
   private readonly recordsProperty = new Property<readonly StationRecord[]>([]);
   public readonly stationsProperty: TReadOnlyProperty<readonly StationRecord[]> = this.recordsProperty;
   public readonly vpProperty: NumberProperty;
@@ -46,8 +51,10 @@ export class SeismologyLabModel {
   public readonly canCheckProperty: TReadOnlyProperty<boolean>;
   private readonly disposeLinks: () => void;
   private unlinkRecords: (() => void) | undefined;
+  /** Incremented on every event change, so a load that resolves late is ignored. */
+  private loadToken = 0;
 
-  public constructor(kind: ScreenKind, events: readonly SeismicEventData[], tandem: Tandem) {
+  public constructor(kind: ScreenKind, events: readonly SeismicEventSummary[], tandem: Tandem) {
     this.kind = kind;
     this.events = events.filter((event) => event.kind === kind);
     const first = this.events[0];
@@ -76,7 +83,7 @@ export class SeismologyLabModel {
     this.canCheckProperty = canCheckProperty;
 
     const invalidate = () => this.checkResultProperty.reset();
-    const rebuild = (event: SeismicEventData) => this.rebuildStations(event);
+    const rebuild = (event: SeismicEventSummary) => this.selectEvent(event);
     this.eventProperty.link(rebuild);
     this.guessProperty.lazyLink(invalidate);
     this.showCirclesProperty.lazyLink(invalidate);
@@ -96,18 +103,57 @@ export class SeismologyLabModel {
     return records.length > 0 ? new Range(start, end) : new Range(0, 1);
   }
 
-  private rebuildStations(event: SeismicEventData): void {
+  /**
+   * Shows the chosen event's stations: at once if its waveforms are loaded (always the
+   * case in tests and for the preloaded first event), otherwise after they arrive.
+   */
+  private selectEvent(summary: SeismicEventSummary): void {
+    const token = ++this.loadToken;
+    this.loadFailedProperty.value = false;
+    const ready = loadedEvent(summary);
+    if (ready) {
+      this.loadingProperty.value = false;
+      this.rebuildStations(ready);
+      return;
+    }
+    this.loadingProperty.value = true;
+    this.rebuildStations(null);
+    loadEvent(summary).then(
+      (event) => {
+        if (token === this.loadToken) {
+          this.loadingProperty.value = false;
+          this.rebuildStations(event);
+        }
+      },
+      () => {
+        if (token === this.loadToken) {
+          this.loadingProperty.value = false;
+          this.loadFailedProperty.value = true;
+        }
+      },
+    );
+  }
+
+  private rebuildStations(event: SeismicEventData | null): void {
     this.unlinkRecords?.();
+    this.unlinkRecords = undefined;
     const old = this.recordsProperty.value;
+    this.guessProperty.reset();
+    this.revealedProperty.reset();
+    if (!event) {
+      this.recordsProperty.value = [];
+      this.fitProperty.value = null;
+      this.circleCountProperty.value = 0;
+      for (const record of old) {
+        record.dispose();
+      }
+      return;
+    }
     const distanceModel =
       this.kind === "regional"
         ? new RegionalDistanceModel(this.vpProperty, this.vsProperty)
         : new GlobalDistanceModel(this.curve, event.depthKm);
-    const records = [...event.stations]
-      .sort((a, b) => a.distanceKm - b.distanceKm)
-      .map((data) => new StationRecord(data, distanceModel));
-    this.guessProperty.reset();
-    this.revealedProperty.reset();
+    const records = stationsByDistance(event).map((data) => new StationRecord(data, distanceModel));
     this.recordsProperty.value = records;
     this.timeWindowProperty.value = this.fullTimeWindow;
     for (const record of old) {
@@ -166,6 +212,7 @@ export class SeismologyLabModel {
   }
 
   public dispose(): void {
+    this.loadToken++;
     this.disposeLinks();
     this.unlinkRecords?.();
     for (const record of this.recordsProperty.value) {
@@ -184,6 +231,8 @@ export class SeismologyLabModel {
       this.checkResultProperty,
       this.timeWindowProperty,
       this.circleCountProperty,
+      this.loadingProperty,
+      this.loadFailedProperty,
     ]) {
       property.dispose();
     }

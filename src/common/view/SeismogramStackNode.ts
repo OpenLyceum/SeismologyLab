@@ -5,7 +5,7 @@
  * axis under the last row, and zoom / pan / fit controls for the common time window.
  * Rows are rebuilt whenever the selected earthquake changes.
  */
-import { NumberProperty } from "scenerystack/axon";
+import { DerivedProperty, NumberProperty } from "scenerystack/axon";
 import { ChartTransform, TickLabelSet, TickMarkSet } from "scenerystack/bamboo";
 import { Range } from "scenerystack/dot";
 import { Orientation } from "scenerystack/phet-core";
@@ -20,7 +20,7 @@ import type { StationRecord } from "../model/StationRecord.js";
 import { FLAT_BUTTON_APPEARANCE_OPTIONS, LIGHT_SURFACE_TEXT_FILL } from "../SeismologyLabButtonOptions.js";
 import { formatSeconds, niceTimeSpacing } from "./format.js";
 import { ROW_PITCH, SeismogramRowNode } from "./SeismogramRowNode.js";
-import { LABEL_FONT, SMALL_FONT, TICK_FONT } from "./SeismologyLabFonts.js";
+import { BOLD_LABEL_FONT, LABEL_FONT, SMALL_FONT, TICK_FONT } from "./SeismologyLabFonts.js";
 
 export class SeismogramStackNode extends Node {
   /** Interactive nodes in traversal order; replaced on every rebuild. */
@@ -108,7 +108,27 @@ export class SeismogramStackNode extends Node {
     });
     this.controls = [zoomButtons, earlierButton, laterButton, fitButton];
 
-    this.children = [this.rowLayer, axis, controlBar];
+    // ── Loading / failure message while an event's waveforms are fetched ─────
+    const statusProperty = new DerivedProperty(
+      [
+        model.loadingProperty,
+        model.loadFailedProperty,
+        viewStrings.loadingStringProperty,
+        viewStrings.loadFailedStringProperty,
+      ],
+      (loading, failed, loadingText, failedText) => (failed ? failedText : loading ? loadingText : ""),
+    );
+    const status = new Text(statusProperty, {
+      font: BOLD_LABEL_FONT,
+      fill: SeismologyLabColors.textColorProperty,
+      maxWidth: STACK.CHART_WIDTH,
+    });
+    statusProperty.link(() => {
+      status.centerX = STACK.LABEL_WIDTH + STACK.TRAY_WIDTH + STACK.CHART_WIDTH / 2;
+      status.centerY = (6 * ROW_PITCH) / 2;
+    });
+
+    this.children = [this.rowLayer, axis, controlBar, status];
 
     // Zoom keeps the window centre, clamped inside the record.
     this.zoomLevelProperty.lazyLink((zoom) => {

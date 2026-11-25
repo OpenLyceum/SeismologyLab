@@ -1,9 +1,12 @@
 import { NumberProperty } from "scenerystack/axon";
 import { expect, it } from "vitest";
-import { EVENTS } from "../src/common/data/generated/eventData.js";
+import { catalogEvents, loadEvent } from "../src/common/data/eventLibrary.js";
 import { RegionalDistanceModel } from "../src/common/model/DistanceModel.js";
 import { StationRecord } from "../src/common/model/StationRecord.js";
 import { listenerCount } from "./helpers/memoryLeak.js";
+
+// Waveforms load lazily in the app; load them all up front so models rebuild synchronously.
+const EVENTS = await Promise.all(catalogEvents().map(loadEvent));
 
 it("reacts to picks and wave speeds and unlinks on dispose", () => {
   const vpProperty = new NumberProperty(6.1);

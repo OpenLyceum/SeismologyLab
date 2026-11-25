@@ -4,17 +4,23 @@ Locate an earthquake's epicenter from P–S arrival-time differences on real sei
 
 ## Data
 
-Every seismogram, station position and epicenter in this simulation is real. `npm run build-data` downloads them; the generated modules under `src/common/data/generated/` are committed.
+Every seismogram, station position and epicenter in this simulation is real. `npm run build-data` downloads them; the generated modules under `src/common/data/generated/` are committed. Each earthquake's waveforms are a separate chunk, loaded the first time that earthquake is chosen.
 
 - **Earthquake catalog.** U.S. Geological Survey, ANSS Comprehensive Earthquake Catalog (ComCat), via the FDSN event service at `earthquake.usgs.gov`. Public domain.
 - **Waveforms and station metadata.** Delivered through FDSN `dataselect` and `station` web services by:
-  - the EarthScope Consortium data services, formerly the IRIS DMC, for IU, II and AK;
-  - the Northern California Earthquake Data Center, NCEDC (doi:10.7932/NCEDC), for BK;
+  - the EarthScope Consortium data services, formerly the IRIS DMC, for IU, II, AK, GS, N4, NN, OK and PR;
+  - the Northern California Earthquake Data Center, NCEDC (doi:10.7932/NCEDC), for BK and NC;
   - the Southern California Earthquake Data Center, SCEDC (doi:10.7909/C3WD3xH1), for CI.
 - **Seismic networks.**
   - CI — Caltech / USGS Southern California Seismic Network (doi:10.7914/SN/CI)
   - BK — Berkeley Digital Seismic Network (doi:10.7932/BDSN)
   - AK — Alaska Earthquake Center Regional Seismic Network (doi:10.7914/SN/AK)
+  - NC — USGS Northern California Seismic Network (doi:10.7914/SN/NC)
+  - NN — Nevada Seismic Network, University of Nevada, Reno (doi:10.7914/SN/NN)
+  - OK — Oklahoma Seismic Network, Oklahoma Geological Survey (doi:10.7914/SN/OK)
+  - GS — U.S. Geological Survey Networks (doi:10.7914/SN/GS)
+  - N4 — Central and Eastern US Network (doi:10.7914/SN/N4)
+  - PR — Puerto Rico Seismic Network (doi:10.7914/SN/PR)
   - IU — Global Seismograph Network, IRIS/USGS (doi:10.7914/SN/IU)
   - II — Global Seismograph Network, IRIS/IDA (doi:10.7914/SN/II)
 - **Travel times.** The IASP91 Earth model (Kennett, B. L. N. & Engdahl, E. R., 1991, *Geophys. J. Int.* 105, 429–465), computed with TauP 3.2.1 (Crotwell, H. P., Owens, T. J. & Ritsema, J., 1999, *Seismol. Res. Lett.* 70, 154–160).

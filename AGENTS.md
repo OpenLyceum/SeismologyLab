@@ -4,8 +4,9 @@ Sim-specific context for AI assistants. General SceneryStack guidance: [OpenLyce
 
 ## Project
 
-Students locate an earthquake's epicenter from P–S arrival-time differences on **real seismograms**. `src/main.ts` registers two screens:
+Students locate an earthquake's epicenter from P–S arrival-time differences on **real seismograms**. `src/main.ts` registers three screens:
 
+- **Waves** — any bundled earthquake replayed in compressed time: P and S fronts spread from the epicenter, each record fills in, and playback pauses briefly at each P arrival. No picking.
 - **Regional** — six stations 40–250 km from a crustal earthquake; S–P → distance with constant crustal speeds (vP, vS adjustable).
 - **Global** — six GSN stations 25–95° away from a great earthquake; S–P → distance from IASP91 travel-time curves.
 
@@ -22,7 +23,9 @@ Physics, data provenance and non-claims are in [`doc/model.md`](doc/model.md). A
 | `src/SeismologyLabNamespace.ts` | Namespace for color property names |
 | `src/i18n/StringManager.ts` | Singleton localized string accessor (`getViewStrings`, `getControlA11yStrings`) |
 | `src/common/data/dataTypes.ts` | Shapes of the bundled data (hand-written) |
-| `src/common/data/generated/` | **Generated — do not edit.** `npm run build-data` owns it |
+| `src/common/data/generated/` | **Generated — do not edit.** `npm run build-data` owns it. `eventCatalog.ts` is bundled; `waveforms/<key>.ts` is one lazily loaded chunk per event |
+| `src/common/data/eventLibrary.ts` | `catalogEvents`, `loadEvent` (cached dynamic import), `stationsByDistance` |
+| `src/common/TimeModel.ts` | Template-owned (`ownedIfPresent`): copy from SceneryStackTemplate, never fork |
 | `src/common/model/SeismologyLabModel.ts` | Per-screen state: event, stations, picks, guess, check/reveal |
 | `src/common/model/StationRecord.ts` | One station's samples, P/S picks, S–P and distance |
 | `src/common/model/DistanceModel.ts` | Regional (constant speeds) vs global (IASP91) S–P → distance |
@@ -34,17 +37,22 @@ Physics, data provenance and non-claims are in [`doc/model.md`](doc/model.md). A
 | `src/common/view/SeismogramStackNode.ts` | Rows, shared time axis, zoom / pan / fit |
 | `src/common/view/SeismogramRowNode.ts` | One trace (min/max envelope), readout, theoretical ticks |
 | `src/common/view/PickMarkerNode.ts` | Draggable / keyboard P or S marker |
-| `src/common/view/EpicenterMapNode.ts` | Map, circles, epicenter marker, reveal overlay |
+| `src/common/view/StationMapNode.ts` | Shared map base: land, graticule, stations, cached projection per event |
+| `src/common/view/mapShapes.ts`, `traceShapes.ts` | Small-circle / coastline shapes; per-column trace envelope |
+| `src/common/view/EpicenterMapNode.ts` | Lab circles, epicenter marker, reveal overlay on `StationMapNode` |
 | `src/common/view/MapProjection.ts` | Equirectangular projection, regional framing, world seam |
 | `src/common/view/CheckPanel.ts` | Check / Reveal and feedback |
 | `src/regional/view/WaveSpeedPanel.ts` | vP / vS controls |
 | `src/global/view/TravelTimeChartNode.ts` | P, S, S–P curves with per-station read-off lines |
+| `src/waves/model/WavesModel.ts` | Replay clock, arrival holds, `frontRadiusKm` |
+| `src/waves/view/` | `ArrivalTraceStackNode`, `WavefrontMapNode`, `ArrivalChartNode`, `WavesScreenView` |
 | `scripts/build-data.ts` | Fetches and reshapes every dataset |
 | `scripts/data/events.json` | Hand-edited event list, networks, distance bands, filters |
 | `scripts/data/{fdsn,miniseed,dsp,taup,buildEvent}.ts` | FDSN routing, SEED reader, filters, TauP wrapper, station selection |
 
 ## Data
 
+- Add an event to `scripts/data/events.json` (`eventId` = ComCat ID), run `npm run build-data`, and keep it only if `tests/eventData.test.ts` passes. Magna 2020 (UU) was dropped: the station service returned no usable UU stations.
 - `npm run build-data` needs network access and Java (TauP 3.2.1 is downloaded into `.cache/`). Downloads are cached; delete `.cache/data/` to refresh.
 - `irisws/timeseries` and `irisws/traveltime` are **retired**. Use FDSN `dataselect` + `station`, routed per network (NC/BK → NCEDC, CI → SCEDC, the rest → EarthScope).
 - Regional stations are capped at 250 km on purpose. Beyond that Pn/Sn arrive first and the constant-speed rule underestimates distance by 35–80 km. `tests/eventData.test.ts` checks that answer-key picks relocate every event within 30 km (regional) or 250 km (global).

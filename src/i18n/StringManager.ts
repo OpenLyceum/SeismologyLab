@@ -77,10 +77,12 @@ export class StringManager {
    * Each property updates automatically when the locale changes.
    */
   public getScreenNames(): {
+    readonly wavesStringProperty: ReadOnlyProperty<string>;
     readonly regionalStringProperty: ReadOnlyProperty<string>;
     readonly globalStringProperty: ReadOnlyProperty<string>;
   } {
     return {
+      wavesStringProperty: stringProperties.screens.wavesStringProperty,
       regionalStringProperty: stringProperties.screens.regionalStringProperty,
       globalStringProperty: stringProperties.screens.globalStringProperty,
     };
@@ -94,6 +96,16 @@ export class StringManager {
   /** Accessible names, help text and responses for the shared controls. */
   public getControlA11yStrings() {
     return stringProperties.a11y.controls;
+  }
+
+  /** Visible labels on the Waves screen. */
+  public getWavesViewStrings() {
+    return stringProperties.view.waves;
+  }
+
+  /** Accessibility strings for the Waves screen. */
+  public getWavesA11yStrings() {
+    return stringProperties.a11y.waves;
   }
 
   /** Accessibility strings for the Regional screen. */

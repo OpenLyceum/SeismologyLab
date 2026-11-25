@@ -129,6 +129,16 @@ const SeismologyLabColors = {
     default: "#ff8a65",
     projector: "#d84315",
   }),
+  /** Waves screen: the shaded S–P gap on a trace, once both waves have arrived. */
+  sMinusPBandColorProperty: new ProfileColorProperty(SeismologyLabNamespace, "sMinusPBand", {
+    default: "rgba(255,235,59,0.14)",
+    projector: "rgba(106,27,154,0.12)",
+  }),
+  /** Waves screen: the time cursor sweeping across every trace. */
+  timeCursorColorProperty: new ProfileColorProperty(SeismologyLabNamespace, "timeCursor", {
+    default: "#ffeb3b",
+    projector: "#6a1b9a",
+  }),
   /** Readout backdrop drawn over a seismogram. */
   readoutBackgroundColorProperty: new ProfileColorProperty(SeismologyLabNamespace, "readoutBackground", {
     default: "rgba(13,27,42,0.85)",

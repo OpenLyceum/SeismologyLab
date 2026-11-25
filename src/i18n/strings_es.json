@@ -1,6 +1,7 @@
 {
   "title": "Laboratorio de sismología",
   "screens": {
+    "waves": "Ondas",
     "regional": "Regional",
     "global": "Global"
   },
@@ -36,9 +37,35 @@
     "sCurve": "S",
     "sMinusPCurve": "S–P",
     "pMarker": "P",
-    "sMarker": "S"
+    "sMarker": "S",
+    "loading": "Cargando sismogramas…",
+    "loadFailed": "No se pudieron cargar estos sismogramas. Elige otro sismo o recarga la página.",
+    "waves": {
+      "autoPause": "Pausa en cada llegada P",
+      "restart": "Repetir",
+      "clock": "{{time}} s después del sismo",
+      "pFront": "Onda P",
+      "sFront": "Onda S",
+      "arrivalChartTitle": "Tiempo de llegada según la distancia",
+      "arrivalChartTime": "Tiempo de llegada (s)",
+      "arrivalChartKm": "Distancia al epicentro (km)",
+      "arrivalChartDegrees": "Distancia al epicentro (°)",
+      "sMinusPGap": "S–P",
+      "epicenter": "Epicentro"
+    }
   },
   "a11y": {
+    "waves": {
+      "screenSummary": {
+        "playArea": "El área de juego repite un sismo real. En el mapa, la onda P y luego la onda S, más lenta, se alejan del epicentro. Junto al mapa, el sismograma de cada estación se dibuja a medida que llegan las ondas, y una gráfica sitúa cada tiempo de llegada según la distancia de la estación.",
+        "controlArea": "El área de control permite elegir un sismo, reproducir, pausar o avanzar paso a paso la repetición, cambiar su velocidad, activar o no la pausa en cada llegada P, repetir desde el inicio y restablecer.",
+        "interactionHint": "Pulsa Reproducir y observa cómo crece la separación entre las llegadas P y S con la distancia al epicentro."
+      },
+      "currentDetails": "{{time}} segundos después del sismo. La onda P ha llegado a {{p}} de {{total}} estaciones y la onda S a {{s}}.",
+      "pArrival": "La onda P llega a la estación {{station}}, a {{distance}} kilómetros, {{time}} segundos después del sismo.",
+      "sArrival": "La onda S llega a la estación {{station}}, {{interval}} segundos después de la onda P.",
+      "timeControlsHelp": "Reproduce, pausa o avanza la repetición paso a paso."
+    },
     "regional": {
       "screenSummary": {
         "playArea": "El área de juego muestra seis sismogramas reales de estaciones cercanas a un sismo, apilados por estación, y un mapa de las estaciones. Cada sismograma tiene un marcador de llegada P y uno S.",

@@ -2,9 +2,11 @@
  * SeismologyLabScreenIcons.ts
  *
  * Programmatic home-screen / navigation-bar icons, drawn on the standard 548 × 373
- * canvas: Regional is a seismogram with its P and S picks; Global is the Earth with
+ * canvas: Waves is P and S wavefronts spreading from an epicenter past two stations;
+ * Regional is a seismogram with its P and S picks; Global is the Earth with
  * three stations' distance circles meeting at an epicenter.
  */
+import { Vector2 } from "scenerystack/dot";
 import { Shape } from "scenerystack/kite";
 import { Circle, Line, Node, Path, Rectangle } from "scenerystack/scenery";
 import { StarShape } from "scenerystack/scenery-phet";
@@ -34,6 +36,44 @@ function traceShape(left: number, right: number, centerY: number, pX: number, sX
     shape.lineTo(x, centerY + amplitude * Math.sin(x * 0.55) * Math.cos(x * 0.13));
   }
   return shape;
+}
+
+export function createWavesIcon(): ScreenIcon {
+  const epicenter = { x: 190, y: H / 2 + 10 };
+  const map = new Rectangle(30, 30, W - 60, H - 60, 12, 12, {
+    fill: SeismologyLabColors.oceanColorProperty,
+    stroke: SeismologyLabColors.chartStrokeColorProperty,
+    lineWidth: 3,
+  });
+  const ring = (radius: number, stroke: typeof SeismologyLabColors.pWaveColorProperty, dash: number[]) => {
+    const circle = new Circle(radius, { stroke, lineWidth: 7, lineDash: dash });
+    circle.center = new Vector2(epicenter.x, epicenter.y);
+    return circle;
+  };
+  const triangle = (x: number, y: number, index: number) =>
+    new Path(new Shape().moveTo(0, -22).lineTo(19, 11).lineTo(-19, 11).close(), {
+      fill: stationColorProperty(index),
+      stroke: SeismologyLabColors.chartBackgroundColorProperty,
+      lineWidth: 3,
+      translation: new Vector2(x, y),
+    });
+  const star = new Path(new StarShape({ outerRadius: 24, innerRadius: 10 }), {
+    fill: SeismologyLabColors.truthColorProperty,
+    translation: new Vector2(epicenter.x, epicenter.y),
+  });
+  const content = new Node({
+    children: [
+      background(),
+      map,
+      ring(250, SeismologyLabColors.pWaveColorProperty, []),
+      ring(140, SeismologyLabColors.sWaveColorProperty, [18, 10]),
+      triangle(epicenter.x + 250 * 0.8, epicenter.y - 250 * 0.6, 0),
+      triangle(epicenter.x + 210, epicenter.y + 80, 1),
+      star,
+    ],
+  });
+  content.clipArea = Shape.rectangle(0, 0, W, H);
+  return iconFrom(content);
 }
 
 export function createRegionalIcon(): ScreenIcon {

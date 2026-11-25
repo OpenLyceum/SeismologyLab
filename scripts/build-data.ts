@@ -1,7 +1,12 @@
 /** Generate the offline seismograms, IASP91 tables and maps. */
-import { readdirSync, statSync } from "node:fs";
+import { readdirSync, rmSync, statSync } from "node:fs";
 import { registerHooks } from "node:module";
-import type { SeismicEventData, TravelTimeTableData } from "../src/common/data/dataTypes.js";
+import type {
+  SeismicEventData,
+  SeismicEventSummary,
+  StationWaveforms,
+  TravelTimeTableData,
+} from "../src/common/data/dataTypes.js";
 import type { EventSpec } from "./data/buildEvent.js";
 import config from "./data/events.json" with { type: "json" };
 
@@ -18,7 +23,18 @@ const { numberArray, writeGeneratedModule } = await import("./data/emit.js");
 const { travelTimes } = await import("./data/taup.js");
 
 const GENERATED = "src/common/data/generated";
-const LIMIT_BYTES = 2_000_000;
+/** The catalog, travel times and land are bundled into the main chunk; keep them small. */
+const BUNDLED_LIMIT_BYTES = 600_000;
+/** Each event's waveforms are a separate lazily loaded chunk. */
+const WAVEFORM_LIMIT_BYTES = 300_000;
+
+function summarize({ stations, ...event }: SeismicEventData): SeismicEventSummary {
+  return { ...event, stations: stations.map(({ vertical: _v, horizontal: _h, ...station }) => station) };
+}
+
+function waveforms({ stations }: SeismicEventData): StationWaveforms[] {
+  return stations.map(({ vertical, horizontal }) => ({ vertical, horizontal }));
+}
 
 async function build(): Promise<void> {
   const [world, regional] = await Promise.all([fetchLand(110), fetchLand(50)]);
@@ -63,11 +79,32 @@ async function build(): Promise<void> {
     p: rows.map((row) => row.map(({ p }) => p)),
     s: rows.map((row) => row.map(({ s }) => s)),
   };
-  const eventLines = (items: SeismicEventData[]) => items.map((item) => `  ${JSON.stringify(item)},`).join("\n");
+  rmSync(`${GENERATED}/eventData.ts`, { force: true });
+  rmSync(`${GENERATED}/waveforms`, { recursive: true, force: true });
   writeGeneratedModule(
-    `${GENERATED}/eventData.ts`,
-    "Catalog origins, stations and quantized waveform samples.",
-    `import type { SeismicEventData } from "../dataTypes.js";\n\nexport const EVENTS: readonly SeismicEventData[] = [\n${eventLines(events)}\n];`,
+    `${GENERATED}/eventCatalog.ts`,
+    "Catalog origins, stations and theoretical arrivals. Waveforms load per event (waveformLoaders.ts).",
+    `import type { SeismicEventSummary } from "../dataTypes.js";\n\nexport const EVENT_CATALOG: readonly SeismicEventSummary[] = [\n${events
+      .map((event) => `  ${JSON.stringify(summarize(event))},`)
+      .join("\n")}\n];`,
+  );
+  for (const event of events) {
+    writeGeneratedModule(
+      `${GENERATED}/waveforms/${event.key}.ts`,
+      `Quantized vertical and horizontal samples for ${event.key}, in catalog station order.`,
+      `import type { StationWaveforms } from "../../dataTypes.js";\n\nexport const WAVEFORMS: readonly StationWaveforms[] = [\n${waveforms(
+        event,
+      )
+        .map((station) => `  ${JSON.stringify(station)},`)
+        .join("\n")}\n];`,
+    );
+  }
+  writeGeneratedModule(
+    `${GENERATED}/waveformLoaders.ts`,
+    "One dynamic import per event, so Vite emits each event's waveforms as its own chunk.",
+    `import type { StationWaveforms } from "../dataTypes.js";\n\nexport const WAVEFORM_LOADERS: Readonly<Record<string, () => Promise<readonly StationWaveforms[]>>> = {\n${events
+      .map((event) => `  ${event.key}: async () => (await import("./waveforms/${event.key}.js")).WAVEFORMS,`)
+      .join("\n")}\n};`,
   );
   writeGeneratedModule(
     `${GENERATED}/travelTimeData.ts`,
@@ -89,10 +126,19 @@ async function build(): Promise<void> {
       bytes: Buffer.byteLength(JSON.stringify(event)),
     })),
   );
-  const size = readdirSync(GENERATED).reduce((total, file) => total + statSync(`${GENERATED}/${file}`).size, 0);
-  console.log(`Generated data: ${size} bytes (limit ${LIMIT_BYTES})`);
-  if (size > LIMIT_BYTES) {
-    throw new Error("Generated data exceeds the 2 MB limit");
+  const fileSize = (path: string) => statSync(path).size;
+  const bundled = readdirSync(GENERATED)
+    .filter((file) => file.endsWith(".ts"))
+    .reduce((total, file) => total + fileSize(`${GENERATED}/${file}`), 0);
+  console.log(`Bundled data: ${bundled} bytes (limit ${BUNDLED_LIMIT_BYTES})`);
+  if (bundled > BUNDLED_LIMIT_BYTES) {
+    throw new Error(`Bundled data exceeds ${BUNDLED_LIMIT_BYTES} bytes`);
+  }
+  for (const event of events) {
+    const size = fileSize(`${GENERATED}/waveforms/${event.key}.ts`);
+    if (size > WAVEFORM_LIMIT_BYTES) {
+      throw new Error(`${event.key} waveforms are ${size} bytes (limit ${WAVEFORM_LIMIT_BYTES})`);
+    }
   }
 }
 

@@ -8,6 +8,7 @@ An earthquake sends out two body waves. The compressional **P** wave is faster t
 
 Students do the whole method on real records. They pick the first P onset and the first S onset on each seismogram, the sim converts each S–P interval into a distance circle, and the student drags a marker to where the circles meet. **Check** reports how far the marker is from the USGS epicenter, without saying where that is. **Reveal** shows the USGS epicenter, the theoretical arrivals on every trace, and the least-squares best fit of the student's own circles.
 
+- **Waves** — any of the bundled earthquakes replayed in compressed time, before any picking. The P and S fronts spread from the epicenter, each station's record fills in as the clock passes, and a chart plots each arrival time against distance. Playback holds for 1.2 s each time the P wave reaches a station (this can be turned off).
 - **Regional** — six stations 40–250 km from a crustal earthquake. Distance comes from constant crustal wave speeds.
 - **Global** — six Global Seismograph Network stations 25–95° (2,800–10,500 km) from a great earthquake. Distance comes from the IASP91 travel-time curves.
 
@@ -35,12 +36,16 @@ The defaults are textbook crustal averages. The rule is valid only while the dir
 
 **Global.** S–P is read off the IASP91 first-arrival P-family and S-family travel times. These were computed with TauP for distances 0–100° at depths 0, 33, 100, 300 and 600 km, and are interpolated bilinearly at the event's catalog depth. S–P increases monotonically with distance over 1–100°, so each S–P maps to one distance, found by bisection.
 
+**Waves replay.** The clock runs in seconds after the origin time at 8× real time for regional events and 60× for global ones, times the Slow (¼), Normal or Fast (2×) setting. Both kinds of event use the IASP91 curves at the catalog depth for the fronts: each ring is drawn where the first P- or S-family arrival reaches the surface at that moment, found by bisection on the travel-time table. The P and S flags on each record are the station's TauP arrival times, so a ring meets a station when its flag appears. Interpolating the 1° table puts a front within about 7 km of a regional station, and 18 km for the 47 km deep Anchorage event. Past 100°, the edge of the table, a ring is no longer drawn. The rings mark where each wave *surfaces*: at teleseismic distances the wave got there through the mantle, not along the surface.
+
 **Location.** The circles' best fit, `locateEpicenter`, minimizes Σ (great-circle distance to station − distance from S–P)² on the sphere. It uses Gauss–Newton with a numerical Jacobian, starting from a weighted station centroid and eight surrounding points so that it does not settle on the mirror solution of a three-station problem.
 
 ## Where the numbers come from
 
-- **Origins** (time, latitude, longitude, depth, magnitude) come from USGS ComCat: `ci38443183` Ridgecrest 2019 M6.4, `nc72282711` South Napa 2014 M6.0, `ak018fcnsk91` Anchorage 2018 M7.1, `official20110311054624120_30` Tōhoku 2011 M9.1, `us20002926` Gorkha 2015 M7.8, and `official20100227063411530_30` Maule 2010 M8.8.
-- **Waveforms** are raw miniSEED from FDSN `dataselect`: EarthScope for AK, IU and II, NCEDC for BK, and SCEDC for CI. Each record is processed in this order:
+- **Origins** (time, latitude, longitude, depth, magnitude) come from USGS ComCat.
+  - Regional: `ci38443183` Ridgecrest 2019 M6.4, `nc72282711` South Napa 2014 M6.0, `ak018fcnsk91` Anchorage 2018 M7.1, `ci15481673` La Habra 2014 M5.1, `us10006jxs` Pawnee 2016 M5.8, `pr2020007007` Puerto Rico 2020 M6.4, `nn00725272` Monte Cristo Range 2020 M6.5, `nc73821036` Ferndale 2022 M6.4, and `nc75095651` offshore Cape Mendocino 2024 M7.0.
+  - Global: `official20110311054624120_30` Tōhoku 2011 M9.1, `us20002926` Gorkha 2015 M7.8, `official20100227063411530_30` Maule 2010 M8.8, `usb000h4jh` Sea of Okhotsk 2013 M8.3 (598 km deep), `us1000778i` Kaikōura 2016 M7.8, `us2000ahv0` Tehuantepec 2017 M8.2, `ak0219neiszm` Chignik 2021 M8.2, `us6000jllz` Kahramanmaraş 2023 M7.8, `us7000pn9s` Mandalay 2025 M7.7, and `us6000qw60` Kamchatka 2025 M8.8.
+- **Waveforms** are raw miniSEED from FDSN `dataselect`: EarthScope for AK, GS, II, IU, N4, NN, OK and PR, NCEDC for BK and NC, and SCEDC for CI. Each record is processed in this order:
   1. divide by the station sensitivity (the station-service `Scale`), giving approximate ground velocity;
   2. demean, detrend and taper;
   3. apply a zero-phase 4th-order Butterworth bandpass: 0.5–8 Hz regional (0.3–5 Hz Anchorage), 0.02–1 Hz global;

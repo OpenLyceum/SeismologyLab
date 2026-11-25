@@ -6,11 +6,12 @@ Locate an earthquake's epicenter from P–S arrival-time differences on real sei
 
 ## Features
 
-- **Real data**: six USGS-catalogued earthquakes, with seismograms from the CI, BK, AK, IU and II networks
+- **Real data**: 19 USGS-catalogued earthquakes (9 regional, 10 global), with seismograms from 13 networks; each earthquake's waveforms load on demand
+- **Waves** screen: replay an earthquake in compressed time and watch the P and S fronts spread from the epicenter, each record fill in, and S–P grow with distance; playback pauses briefly as the P wave reaches each station
 - **Regional** screen: pick P and S, turn S–P into distance with adjustable crustal wave speeds, and locate the epicenter
 - **Global** screen: the same method at teleseismic distances, using IASP91 travel-time curves
 - Check (miss distance only) and Reveal (USGS epicenter, theoretical arrivals, best fit of your circles)
-- Keyboard-operable pick and epicenter markers with spoken responses
+- Keyboard-operable pick and epicenter markers and time controls, with spoken responses
 - English, Spanish, and French localization via `StringManager`
 - Default and projector color profiles
 - Progressive Web App (installable, offline-capable)

@@ -29,6 +29,66 @@
       "window": [-20, 200],
       "band": [0.3, 5],
       "sps": 20
+    },
+    {
+      "key": "lahabra2014",
+      "eventId": "ci15481673",
+      "networks": ["CI"],
+      "distKm": [40, 250],
+      "stations": 6,
+      "window": [-20, 160],
+      "band": [0.5, 8],
+      "sps": 20
+    },
+    {
+      "key": "pawnee2016",
+      "eventId": "us10006jxs",
+      "networks": ["OK", "GS", "N4", "US", "O2"],
+      "distKm": [40, 250],
+      "stations": 6,
+      "window": [-20, 160],
+      "band": [0.5, 8],
+      "sps": 20
+    },
+    {
+      "key": "puertorico2020",
+      "eventId": "pr2020007007",
+      "networks": ["PR", "CU", "IU"],
+      "distKm": [40, 250],
+      "stations": 6,
+      "window": [-20, 160],
+      "band": [0.5, 8],
+      "sps": 20
+    },
+    {
+      "key": "montecristo2020",
+      "eventId": "nn00725272",
+      "networks": ["NN", "SN", "CI", "BK"],
+      "distKm": [40, 250],
+      "stations": 6,
+      "window": [-20, 160],
+      "band": [0.5, 8],
+      "sps": 20
+    },
+    {
+      "key": "ferndale2022",
+      "eventId": "nc73821036",
+      "networks": ["NC", "BK"],
+      "distKm": [40, 250],
+      "stations": 6,
+      "window": [-20, 160],
+      "band": [0.5, 8],
+      "sps": 20
+    },
+    {
+      "key": "mendocino2024",
+      "eventId": "nc75095651",
+      "networks": ["NC", "BK"],
+      "distKm": [40, 250],
+      "stations": 6,
+      "window": [-20, 160],
+      "band": [0.5, 8],
+      "sps": 20
     }
   ],
   "global": [
@@ -55,6 +115,76 @@
     {
       "key": "chile2010",
       "eventId": "official20100227063411530_30",
+      "networks": ["IU", "II"],
+      "distDeg": [25, 95],
+      "stations": 6,
+      "window": [-60, 1800],
+      "band": [0.02, 1],
+      "sps": 2
+    },
+    {
+      "key": "okhotsk2013",
+      "eventId": "usb000h4jh",
+      "networks": ["IU", "II"],
+      "distDeg": [25, 95],
+      "stations": 6,
+      "window": [-60, 1800],
+      "band": [0.02, 1],
+      "sps": 2
+    },
+    {
+      "key": "kaikoura2016",
+      "eventId": "us1000778i",
+      "networks": ["IU", "II"],
+      "distDeg": [25, 95],
+      "stations": 6,
+      "window": [-60, 1800],
+      "band": [0.02, 1],
+      "sps": 2
+    },
+    {
+      "key": "chiapas2017",
+      "eventId": "us2000ahv0",
+      "networks": ["IU", "II"],
+      "distDeg": [25, 95],
+      "stations": 6,
+      "window": [-60, 1800],
+      "band": [0.02, 1],
+      "sps": 2
+    },
+    {
+      "key": "chignik2021",
+      "eventId": "ak0219neiszm",
+      "networks": ["IU", "II"],
+      "distDeg": [25, 95],
+      "stations": 6,
+      "window": [-60, 1800],
+      "band": [0.02, 1],
+      "sps": 2
+    },
+    {
+      "key": "turkey2023",
+      "eventId": "us6000jllz",
+      "networks": ["IU", "II"],
+      "distDeg": [25, 95],
+      "stations": 6,
+      "window": [-60, 1800],
+      "band": [0.02, 1],
+      "sps": 2
+    },
+    {
+      "key": "myanmar2025",
+      "eventId": "us7000pn9s",
+      "networks": ["IU", "II"],
+      "distDeg": [25, 95],
+      "stations": 6,
+      "window": [-60, 1800],
+      "band": [0.02, 1],
+      "sps": 2
+    },
+    {
+      "key": "kamchatka2025",
+      "eventId": "us6000qw60",
       "networks": ["IU", "II"],
       "distDeg": [25, 95],
       "stations": 6,

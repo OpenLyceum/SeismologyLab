@@ -17,18 +17,24 @@ import { NumberProperty, Property } from "scenerystack/axon";
 import { ChartTransform } from "scenerystack/bamboo";
 import { Range } from "scenerystack/dot";
 import { Tandem } from "scenerystack/tandem";
-import { EVENTS } from "../src/common/data/generated/eventData.js";
+import { catalogEvents, loadEvent } from "../src/common/data/eventLibrary.js";
 import { RegionalDistanceModel } from "../src/common/model/DistanceModel.js";
 import { SeismologyLabModel } from "../src/common/model/SeismologyLabModel.js";
 import { StationRecord } from "../src/common/model/StationRecord.js";
+import { TimeModel } from "../src/common/TimeModel.js";
 import { PickMarkerNode } from "../src/common/view/PickMarkerNode.js";
 import { SeismogramRowNode } from "../src/common/view/SeismogramRowNode.js";
 import { GlobalModel } from "../src/global/model/GlobalModel.js";
 import { RegionalModel } from "../src/regional/model/RegionalModel.js";
 import SeismologyLabColors from "../src/SeismologyLabColors.js";
+import { WavesModel } from "../src/waves/model/WavesModel.js";
+import { ArrivalTraceRowNode } from "../src/waves/view/ArrivalTraceStackNode.js";
 import { describeDisposalLeaks } from "./helpers/memoryLeak.js";
 
-const longLivedModel = new SeismologyLabModel("regional", EVENTS, Tandem.OPT_OUT);
+// Waveforms load lazily in the app; load them all up front so models rebuild synchronously.
+const EVENTS = await Promise.all(catalogEvents().map(loadEvent));
+
+const longLivedModel = new SeismologyLabModel("regional", catalogEvents(), Tandem.OPT_OUT);
 const firstRecord = () => {
   const record = longLivedModel.stationsProperty.value[0];
   if (!record) {
@@ -41,11 +47,13 @@ const vsProperty = new NumberProperty(3.5);
 const firstStation = EVENTS[0]?.stations[0];
 const windowProperty = new Property(new Range(0, 100));
 const labelProperty = new Property("P");
+const replayTimeProperty = new NumberProperty(30);
 
 describeDisposalLeaks([
   { name: "RegionalModel", create: () => new RegionalModel() },
   { name: "GlobalModel", create: () => new GlobalModel() },
-  { name: "SeismologyLabModel", create: () => new SeismologyLabModel("global", EVENTS, Tandem.OPT_OUT) },
+  { name: "WavesModel", create: () => new WavesModel() },
+  { name: "SeismologyLabModel", create: () => new SeismologyLabModel("global", catalogEvents(), Tandem.OPT_OUT) },
   {
     name: "StationRecord",
     create: () => {
@@ -81,5 +89,22 @@ describeDisposalLeaks([
       });
     },
     keepAlive: () => [firstRecord(), windowProperty, labelProperty],
+  },
+  { name: "TimeModel", create: () => new TimeModel() },
+  {
+    name: "ArrivalTraceRowNode",
+    create: () => {
+      if (!firstStation) {
+        throw new Error("expected bundled stations");
+      }
+      return new ArrivalTraceRowNode(
+        firstStation,
+        false,
+        new Range(-20, 160),
+        replayTimeProperty,
+        SeismologyLabColors.traceColorProperty,
+      );
+    },
+    keepAlive: () => [replayTimeProperty],
   },
 ]);

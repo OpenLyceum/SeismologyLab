@@ -1,12 +1,15 @@
 import { Tandem } from "scenerystack/tandem";
 import { expect, it } from "vitest";
-import { EVENTS } from "../src/common/data/generated/eventData.js";
+import { catalogEvents, loadEvent } from "../src/common/data/eventLibrary.js";
 import { destinationPoint } from "../src/common/model/geodesy.js";
 import { SeismologyLabModel } from "../src/common/model/SeismologyLabModel.js";
 import { CHECK_FAIR_KM, CHECK_GOOD_KM, REGIONAL_VP_KM_S, REGIONAL_VS_KM_S } from "../src/SeismologyLabConstants.js";
 
+// Waveforms load lazily in the app; load them all up front so models rebuild synchronously.
+await Promise.all(catalogEvents().map(loadEvent));
+
 it("rebuilds and disposes stations, clears the guess and resets all controls", () => {
-  const model = new SeismologyLabModel("regional", EVENTS, Tandem.OPT_OUT);
+  const model = new SeismologyLabModel("regional", catalogEvents(), Tandem.OPT_OUT);
   const old = model.stationsProperty.value[0]!;
   old.pPickProperty.value = 15;
   model.guessProperty.value = [0, 0];
@@ -33,7 +36,7 @@ it("rebuilds and disposes stations, clears the guess and resets all controls", (
 it.each(["regional", "global"] as const)(
   "checks each %s threshold only when three circles and a guess exist",
   (kind) => {
-    const model = new SeismologyLabModel(kind, EVENTS, Tandem.OPT_OUT);
+    const model = new SeismologyLabModel(kind, catalogEvents(), Tandem.OPT_OUT);
     const { lon, lat } = model.eventProperty.value;
     model.guessProperty.value = [lon, lat];
     model.check();

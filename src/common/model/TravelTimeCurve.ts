@@ -71,4 +71,27 @@ export class TravelTimeCurve {
     }
     return (low + high) / 2;
   }
+
+  /**
+   * The epicentral distance (°) at which the first P- or S-family arrival reaches the
+   * surface `seconds` after the origin: where that wavefront meets the surface. NaN
+   * before the wave first surfaces above the source, and beyond the table's 100°.
+   */
+  public distanceForTime(phase: "p" | "s", seconds: number, depthKm: number): number {
+    const time = (distDeg: number) => (phase === "p" ? this.pTime(distDeg, depthKm) : this.sTime(distDeg, depthKm));
+    let low = 0;
+    let high = 100;
+    if (!(seconds >= time(low) && seconds <= time(high))) {
+      return Number.NaN;
+    }
+    for (let index = 0; index < 32; index++) {
+      const mid = (low + high) / 2;
+      if (time(mid) < seconds) {
+        low = mid;
+      } else {
+        high = mid;
+      }
+    }
+    return (low + high) / 2;
+  }
 }

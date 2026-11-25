@@ -57,6 +57,17 @@ export const PICK_KEYBOARD_STEP_SECONDS = {
   global: { coarse: 5, fine: 0.5 },
 } as const;
 
+// ── Waves screen ──────────────────────────────────────────────────────────────
+
+/** Earthquake seconds per wall-clock second at normal speed: ≈ 10 s regional, ≈ 25 s global. */
+export const WAVES_PLAYBACK_RATE = { regional: 8, global: 60 } as const;
+/** Wall-clock pause (s) each time the P wave reaches a station. */
+export const WAVES_ARRIVAL_PAUSE_SECONDS = 1.2;
+/** Earthquake seconds the step-forward button advances. */
+export const WAVES_STEP_SECONDS = { regional: 1, global: 10 } as const;
+/** The animation runs this long past the last S arrival (s). */
+export const WAVES_TAIL_SECONDS = { regional: 15, global: 150 } as const;
+
 SeismologyLabNamespace.register("SeismologyLabConstants", {
   SCREEN_VIEW_MARGIN,
   PANEL_CORNER_RADIUS,
@@ -74,4 +85,8 @@ SeismologyLabNamespace.register("SeismologyLabConstants", {
   REQUIRED_CIRCLES,
   MIN_PICK_SEPARATION_SECONDS,
   PICK_KEYBOARD_STEP_SECONDS,
+  WAVES_PLAYBACK_RATE,
+  WAVES_ARRIVAL_PAUSE_SECONDS,
+  WAVES_STEP_SECONDS,
+  WAVES_TAIL_SECONDS,
 });

@@ -21,20 +21,33 @@ import "./brand.js";
 
 import { onReadyToLaunch, PreferencesModel, Sim } from "scenerystack/sim";
 import { Tandem } from "scenerystack/tandem";
+import { catalogEvents, loadEvent } from "./common/data/eventLibrary.js";
 import { GlobalScreen } from "./global/GlobalScreen.js";
 import { StringManager } from "./i18n/StringManager.js";
 import { SeismologyLabPreferencesModel } from "./preferences/SeismologyLabPreferencesModel.js";
 import { SeismologyLabPreferencesNode } from "./preferences/SeismologyLabPreferencesNode.js";
 import { RegionalScreen } from "./regional/RegionalScreen.js";
 import SeismologyLabColors from "./SeismologyLabColors.js";
+import { WavesScreen } from "./waves/WavesScreen.js";
 
-onReadyToLaunch(() => {
+// Each screen opens on its first catalog event; fetch those waveforms before the sim
+// starts so no screen's first frame shows a loading message. Other events load on demand.
+const firstEvents = Promise.all(
+  (["regional", "global"] as const).flatMap((kind) => catalogEvents(kind).slice(0, 1).map(loadEvent)),
+);
+
+function launch(): void {
   const stringManager = StringManager.getInstance();
 
   // Simulation-specific preferences; initial values come from seismologyLabQueryParameters.
   const simPreferences = new SeismologyLabPreferencesModel(Tandem.ROOT.createTandem("preferences"));
 
   const screens = [
+    new WavesScreen({
+      name: stringManager.getScreenNames().wavesStringProperty,
+      tandem: Tandem.ROOT.createTandem("wavesScreen"),
+      backgroundColorProperty: SeismologyLabColors.backgroundColorProperty,
+    }),
     new RegionalScreen({
       name: stringManager.getScreenNames().regionalStringProperty,
       tandem: Tandem.ROOT.createTandem("regionalScreen"),
@@ -78,4 +91,9 @@ onReadyToLaunch(() => {
   });
 
   sim.start();
+}
+
+// A failed preload still launches: the screen then shows its load-failure message.
+onReadyToLaunch(() => {
+  firstEvents.then(launch, launch);
 });

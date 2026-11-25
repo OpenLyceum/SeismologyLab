@@ -11,7 +11,7 @@ import { HBox, type Node, Text } from "scenerystack/scenery";
 import { Checkbox, ComboBox, type ComboBoxItem } from "scenerystack/sun";
 import { StringManager } from "../../i18n/StringManager.js";
 import SeismologyLabColors from "../../SeismologyLabColors.js";
-import type { SeismicEventData } from "../data/dataTypes.js";
+import type { SeismicEventSummary } from "../data/dataTypes.js";
 import type { SeismologyLabModel } from "../model/SeismologyLabModel.js";
 import { LIGHT_SURFACE_TEXT_FILL, SEISMOLOGY_LAB_COMBO_BOX_OPTIONS } from "../SeismologyLabButtonOptions.js";
 import { fillPattern } from "./format.js";
@@ -28,34 +28,43 @@ export function labCheckbox(property: Property<boolean>, label: TReadOnlyPropert
   });
 }
 
+/** The earthquake chooser: one item per catalog event, labelled by magnitude, place and year. */
+export function createEventComboBox(
+  eventProperty: Property<SeismicEventSummary>,
+  events: readonly SeismicEventSummary[],
+  listParent: Node,
+): ComboBox<SeismicEventSummary> {
+  const viewStrings = StringManager.getInstance().getViewStrings();
+  const a11yStrings = StringManager.getInstance().getControlA11yStrings();
+  const items: ComboBoxItem<SeismicEventSummary>[] = events.map((event) => {
+    const labelProperty = new DerivedProperty([viewStrings.eventPatternStringProperty], (pattern) =>
+      fillPattern(pattern, {
+        magnitude: toFixed(event.magnitude, 1),
+        place: event.place,
+        year: event.originIso.slice(0, 4),
+      }),
+    );
+    return {
+      value: event,
+      createNode: () => new Text(labelProperty, { font: LABEL_FONT, fill: LIGHT_SURFACE_TEXT_FILL, maxWidth: 330 }),
+      accessibleName: labelProperty,
+    };
+  });
+  return new ComboBox(eventProperty, items, listParent, {
+    ...SEISMOLOGY_LAB_COMBO_BOX_OPTIONS,
+    xMargin: 8,
+    yMargin: 4,
+    accessibleName: a11yStrings.earthquakeStringProperty,
+  });
+}
+
 export class LabControlBar extends HBox {
-  public readonly comboBox: ComboBox<SeismicEventData>;
+  public readonly comboBox: ComboBox<SeismicEventSummary>;
   public readonly checkboxes: Checkbox[];
 
   public constructor(model: SeismologyLabModel, listParent: Node, extraCheckboxes: Checkbox[] = []) {
     const viewStrings = StringManager.getInstance().getViewStrings();
-    const a11yStrings = StringManager.getInstance().getControlA11yStrings();
-
-    const items: ComboBoxItem<SeismicEventData>[] = model.events.map((event) => {
-      const labelProperty = new DerivedProperty([viewStrings.eventPatternStringProperty], (pattern) =>
-        fillPattern(pattern, {
-          magnitude: toFixed(event.magnitude, 1),
-          place: event.place,
-          year: event.originIso.slice(0, 4),
-        }),
-      );
-      return {
-        value: event,
-        createNode: () => new Text(labelProperty, { font: LABEL_FONT, fill: LIGHT_SURFACE_TEXT_FILL, maxWidth: 330 }),
-        accessibleName: labelProperty,
-      };
-    });
-    const comboBox = new ComboBox(model.eventProperty, items, listParent, {
-      ...SEISMOLOGY_LAB_COMBO_BOX_OPTIONS,
-      xMargin: 8,
-      yMargin: 4,
-      accessibleName: a11yStrings.earthquakeStringProperty,
-    });
+    const comboBox = createEventComboBox(model.eventProperty, model.events, listParent);
 
     const checkboxes = [
       labCheckbox(model.showHorizontalProperty, viewStrings.showHorizontalStringProperty),
