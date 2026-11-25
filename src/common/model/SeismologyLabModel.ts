@@ -41,6 +41,8 @@ export class SeismologyLabModel {
   public readonly timeWindowProperty = new Property(new Range(0, 1));
   public readonly curve = new TravelTimeCurve(TRAVEL_TIME_TABLE);
   private readonly circleCountProperty = new NumberProperty(0);
+  /** Stations whose distance circle is drawn (picked, valid and visible). */
+  public readonly drawnCircleCountProperty: TReadOnlyProperty<number> = this.circleCountProperty;
   public readonly canCheckProperty: TReadOnlyProperty<boolean>;
   private readonly disposeLinks: () => void;
   private unlinkRecords: (() => void) | undefined;

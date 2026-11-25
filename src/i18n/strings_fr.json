@@ -1,25 +1,75 @@
 {
-  "title": "Seismology Lab",
+  "title": "Laboratoire de sismologie",
   "screens": {
-    "regional": "Regional",
-    "global": "Global"
+    "regional": "Régional",
+    "global": "Mondial"
+  },
+  "view": {
+    "earthquake": "Séisme",
+    "eventPattern": "M{{magnitude}} · {{place}} ({{year}})",
+    "timeAxis": "Temps après le séisme (s)",
+    "showHorizontal": "Composante horizontale",
+    "showCircles": "Cercles de distance",
+    "showTravelTimes": "Courbes de temps de parcours",
+    "waveSpeeds": "Vitesses des ondes dans la croûte",
+    "pWaveSpeed": "Vitesse des ondes P",
+    "sWaveSpeed": "Vitesse des ondes S",
+    "kmPerSecond": "km/s",
+    "secondsPerKm": "{{value}} km par seconde de S–P",
+    "readoutEmpty": "Pointez P et S",
+    "readoutRegional": "S–P {{interval}} s → {{distance}} km",
+    "readoutGlobal": "S–P {{interval}} s → {{degrees}}° ({{distance}} km)",
+    "readoutInvalid": "S–P {{interval}} s → —",
+    "check": "Vérifier ma position",
+    "reveal": "Révéler la réponse",
+    "feedbackNone": "Pointez P et S sur au moins trois stations, puis faites glisser le marqueur d’épicentre là où les cercles se croisent.",
+    "feedbackReady": "Appuyez sur Vérifier lorsque le marqueur est à l’intersection des cercles.",
+    "feedbackGood": "Excellent — à moins de {{distance}} km de l’épicentre de l’USGS.",
+    "feedbackFair": "Proche — à {{distance}} km de l’épicentre de l’USGS. Affinez vos pointés.",
+    "feedbackFar": "Pas encore — à {{distance}} km. Vérifiez vos pointés S et l’intersection des cercles.",
+    "answer": "Épicentre USGS {{lat}}°, {{lon}}° · profondeur {{depth}} km",
+    "bestFit": "Meilleur ajustement de vos cercles : à {{distance}} km de l’épicentre de l’USGS.",
+    "globalDepthNote": "Les distances mondiales utilisent la courbe IASP91 à la profondeur du catalogue ({{depth}} km).",
+    "travelTimeDistance": "Distance (°)",
+    "travelTimeMinutes": "Temps de parcours (min)",
+    "pCurve": "P",
+    "sCurve": "S",
+    "sMinusPCurve": "S–P",
+    "pMarker": "P",
+    "sMarker": "S"
   },
   "a11y": {
     "regional": {
       "screenSummary": {
-        "playArea": "La zone de jeu affiche le contenu principal de la simulation.",
-        "controlArea": "La zone de contrôle comporte un bouton Tout réinitialiser qui ramène la simulation à son état initial.",
-        "interactionHint": "Explorez la simulation en interagissant avec ses commandes."
+        "playArea": "La zone de jeu montre six sismogrammes réels de stations proches d’un séisme, empilés par station, et une carte des stations. Chaque sismogramme porte un marqueur d’arrivée P et un marqueur S.",
+        "controlArea": "La zone de commandes permet de choisir un séisme, d’afficher la composante horizontale, de modifier les vitesses des ondes P et S dans la croûte, de vérifier votre épicentre, de révéler la réponse et de réinitialiser.",
+        "interactionHint": "Placez chaque marqueur P sur la première arrivée et chaque marqueur S sur la seconde arrivée, plus forte. Chaque temps S moins P trace un cercle de distance autour de sa station."
       },
-      "currentDetails": "La simulation est dans son état initial."
+      "currentDetails": "{{count}} cercles de distance sur {{total}} sont tracés."
     },
     "global": {
       "screenSummary": {
-        "playArea": "La zone de jeu affiche le contenu principal de la simulation.",
-        "controlArea": "La zone de contrôle comporte un bouton Tout réinitialiser qui ramène la simulation à son état initial.",
-        "interactionHint": "Explorez la simulation en interagissant avec ses commandes."
+        "playArea": "La zone de jeu montre six sismogrammes réels enregistrés à des milliers de kilomètres d’un grand séisme, une carte du monde des stations et les courbes de temps de parcours P et S.",
+        "controlArea": "La zone de commandes permet de choisir un séisme, d’afficher la composante horizontale, d’afficher les courbes de temps de parcours, de vérifier votre épicentre, de révéler la réponse et de réinitialiser.",
+        "interactionHint": "Pointez les arrivées P et S sur chaque enregistrement. La courbe de temps de parcours transforme chaque temps S moins P en cercle de distance sur le globe."
       },
-      "currentDetails": "La simulation est dans son état initial."
+      "currentDetails": "{{count}} cercles de distance sur {{total}} sont tracés."
+    },
+    "controls": {
+      "pMarker": "Arrivée P, station {{station}}",
+      "sMarker": "Arrivée S, station {{station}}",
+      "markerHelp": "Utilisez les flèches gauche et droite pour déplacer le marqueur. Maintenez Maj pour des pas fins.",
+      "markerUnplaced": "Non placé",
+      "markerValue": "{{time}} secondes après le séisme",
+      "distanceResponse": "S moins P vaut {{interval}} secondes : la station {{station}} est à environ {{distance}} kilomètres de l’épicentre.",
+      "epicenterMarker": "Marqueur d’épicentre",
+      "epicenterHelp": "Utilisez les flèches pour déplacer le marqueur sur la carte. Maintenez Maj pour des pas fins.",
+      "epicenterValue": "Latitude {{lat}} degrés, longitude {{lon}} degrés",
+      "earlier": "Plus tôt",
+      "later": "Plus tard",
+      "fit": "Afficher tout l’enregistrement",
+      "zoom": "Zoom des sismogrammes",
+      "earthquake": "Séisme"
     }
   },
   "preferences": {

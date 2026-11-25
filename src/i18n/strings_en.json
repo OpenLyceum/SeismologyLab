@@ -4,22 +4,72 @@
     "regional": "Regional",
     "global": "Global"
   },
+  "view": {
+    "earthquake": "Earthquake",
+    "eventPattern": "M{{magnitude}} · {{place}} ({{year}})",
+    "timeAxis": "Time after the earthquake (s)",
+    "showHorizontal": "Horizontal component",
+    "showCircles": "Distance circles",
+    "showTravelTimes": "Travel-time curves",
+    "waveSpeeds": "Crustal wave speeds",
+    "pWaveSpeed": "P-wave speed",
+    "sWaveSpeed": "S-wave speed",
+    "kmPerSecond": "km/s",
+    "secondsPerKm": "{{value}} km per second of S–P",
+    "readoutEmpty": "Pick P and S",
+    "readoutRegional": "S–P {{interval}} s → {{distance}} km",
+    "readoutGlobal": "S–P {{interval}} s → {{degrees}}° ({{distance}} km)",
+    "readoutInvalid": "S–P {{interval}} s → —",
+    "check": "Check my location",
+    "reveal": "Reveal answer",
+    "feedbackNone": "Pick P and S on at least three stations, then drag the epicenter marker to where the circles meet.",
+    "feedbackReady": "Press Check when the marker sits where the circles meet.",
+    "feedbackGood": "Excellent — within {{distance}} km of the USGS epicenter.",
+    "feedbackFair": "Close — {{distance}} km from the USGS epicenter. Refine your picks.",
+    "feedbackFar": "Not yet — {{distance}} km away. Check your S picks and the circle crossing.",
+    "answer": "USGS epicenter {{lat}}°, {{lon}}° · depth {{depth}} km",
+    "bestFit": "Best fit of your circles: {{distance}} km from the USGS epicenter.",
+    "globalDepthNote": "Global distances use the IASP91 curve at the catalog depth ({{depth}} km).",
+    "travelTimeDistance": "Distance (°)",
+    "travelTimeMinutes": "Travel time (min)",
+    "pCurve": "P",
+    "sCurve": "S",
+    "sMinusPCurve": "S–P",
+    "pMarker": "P",
+    "sMarker": "S"
+  },
   "a11y": {
     "regional": {
       "screenSummary": {
-        "playArea": "The play area shows the main simulation content.",
-        "controlArea": "The control area has a Reset All button that returns the simulation to its starting state.",
-        "interactionHint": "Explore the simulation by interacting with its controls."
+        "playArea": "The play area shows six real seismograms from stations near an earthquake, stacked by station, and a map of the stations. Each seismogram has a P and an S arrival marker.",
+        "controlArea": "The control area lets you choose an earthquake, show the horizontal component, change the crustal P and S wave speeds, check your epicenter, reveal the answer, and reset.",
+        "interactionHint": "Move each P marker to the first arrival and each S marker to the larger second arrival. Each S minus P time draws a distance circle around its station."
       },
-      "currentDetails": "The simulation is in its initial state."
+      "currentDetails": "{{count}} of {{total}} distance circles are drawn."
     },
     "global": {
       "screenSummary": {
-        "playArea": "The play area shows the main simulation content.",
-        "controlArea": "The control area has a Reset All button that returns the simulation to its starting state.",
-        "interactionHint": "Explore the simulation by interacting with its controls."
+        "playArea": "The play area shows six real seismograms recorded thousands of kilometres from a large earthquake, a world map of the stations, and the P and S travel-time curves.",
+        "controlArea": "The control area lets you choose an earthquake, show the horizontal component, show the travel-time curves, check your epicenter, reveal the answer, and reset.",
+        "interactionHint": "Pick the P and S arrivals on each record. The travel-time curve turns each S minus P time into a distance circle on the globe."
       },
-      "currentDetails": "The simulation is in its initial state."
+      "currentDetails": "{{count}} of {{total}} distance circles are drawn."
+    },
+    "controls": {
+      "pMarker": "P arrival, station {{station}}",
+      "sMarker": "S arrival, station {{station}}",
+      "markerHelp": "Use the left and right arrow keys to move the marker. Hold Shift for fine steps.",
+      "markerUnplaced": "Not placed",
+      "markerValue": "{{time}} seconds after the earthquake",
+      "distanceResponse": "S minus P is {{interval}} seconds, so station {{station}} is about {{distance}} kilometres from the epicenter.",
+      "epicenterMarker": "Epicenter marker",
+      "epicenterHelp": "Use the arrow keys to move the marker on the map. Hold Shift for fine steps.",
+      "epicenterValue": "Latitude {{lat}} degrees, longitude {{lon}} degrees",
+      "earlier": "Pan earlier",
+      "later": "Pan later",
+      "fit": "Show the whole record",
+      "zoom": "Zoom seismograms",
+      "earthquake": "Earthquake"
     }
   },
   "preferences": {

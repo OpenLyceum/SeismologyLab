@@ -86,6 +86,16 @@ export class StringManager {
     };
   }
 
+  /** Visible labels, readouts and feedback shared by both screens. */
+  public getViewStrings() {
+    return stringProperties.view;
+  }
+
+  /** Accessible names, help text and responses for the shared controls. */
+  public getControlA11yStrings() {
+    return stringProperties.a11y.controls;
+  }
+
   /** Accessibility strings for the Regional screen. */
   public getRegionalA11yStrings() {
     return stringProperties.a11y.regional;

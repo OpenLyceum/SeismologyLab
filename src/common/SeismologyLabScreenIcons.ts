@@ -1,13 +1,15 @@
 /**
  * SeismologyLabScreenIcons.ts
  *
- * Programmatic home-screen / navigation-bar icons for each screen.
- * Drawn on the standard PhET 548 × 373 canvas using SeismologyLabColors.
- * Replace the stub backgrounds with screen-specific motifs.
+ * Programmatic home-screen / navigation-bar icons, drawn on the standard 548 × 373
+ * canvas: Regional is a seismogram with its P and S picks; Global is the Earth with
+ * three stations' distance circles meeting at an epicenter.
  */
-import { Node, Rectangle } from "scenerystack/scenery";
+import { Shape } from "scenerystack/kite";
+import { Circle, Line, Node, Path, Rectangle } from "scenerystack/scenery";
+import { StarShape } from "scenerystack/scenery-phet";
 import { ScreenIcon } from "scenerystack/sim";
-import SeismologyLabColors from "../SeismologyLabColors.js";
+import SeismologyLabColors, { stationColorProperty } from "../SeismologyLabColors.js";
 
 const W = 548;
 const H = 373;
@@ -24,18 +26,76 @@ function iconFrom(content: Node): ScreenIcon {
   });
 }
 
+/** A synthetic record: quiet, a small P coda, then a larger S coda (icon only, not data). */
+function traceShape(left: number, right: number, centerY: number, pX: number, sX: number): Shape {
+  const shape = new Shape().moveTo(left, centerY);
+  for (let x = left; x <= right; x += 2) {
+    const amplitude = x < pX ? 2 : x < sX ? 28 * Math.exp(-(x - pX) / 90) + 6 : 95 * Math.exp(-(x - sX) / 70) + 8;
+    shape.lineTo(x, centerY + amplitude * Math.sin(x * 0.55) * Math.cos(x * 0.13));
+  }
+  return shape;
+}
+
 export function createRegionalIcon(): ScreenIcon {
-  return iconFrom(
-    new Node({
-      children: [background()],
-    }),
-  );
+  const centerY = H / 2;
+  const pX = 150;
+  const sX = 290;
+  const chart = new Rectangle(30, 40, W - 60, H - 80, 12, 12, {
+    fill: SeismologyLabColors.chartBackgroundColorProperty,
+    stroke: SeismologyLabColors.chartStrokeColorProperty,
+    lineWidth: 3,
+  });
+  const trace = new Path(traceShape(50, W - 50, centerY, pX, sX), {
+    stroke: SeismologyLabColors.traceColorProperty,
+    lineWidth: 3,
+  });
+  const pPick = new Line(pX, 55, pX, H - 55, { stroke: SeismologyLabColors.pWaveColorProperty, lineWidth: 7 });
+  const sPick = new Line(sX, 55, sX, H - 55, { stroke: SeismologyLabColors.sWaveColorProperty, lineWidth: 7 });
+  return iconFrom(new Node({ children: [background(), chart, trace, pPick, sPick] }));
 }
 
 export function createGlobalIcon(): ScreenIcon {
-  return iconFrom(
-    new Node({
-      children: [background()],
-    }),
-  );
+  const radius = 160;
+  const center = { x: W / 2, y: H / 2 };
+  const earth = new Circle(radius, {
+    fill: SeismologyLabColors.oceanColorProperty,
+    stroke: SeismologyLabColors.chartStrokeColorProperty,
+    lineWidth: 4,
+  });
+  earth.centerX = center.x;
+  earth.centerY = center.y;
+  const epicenter = { x: center.x + 30, y: center.y - 20 };
+  const stations = [
+    { x: center.x - 95, y: center.y - 70 },
+    { x: center.x + 110, y: center.y + 60 },
+    { x: center.x - 40, y: center.y + 105 },
+  ];
+  const rings = stations.map((station, index) => {
+    const distance = Math.hypot(station.x - epicenter.x, station.y - epicenter.y);
+    const ring = new Circle(distance, { stroke: stationColorProperty(index), lineWidth: 5 });
+    ring.centerX = station.x;
+    ring.centerY = station.y;
+    return ring;
+  });
+  const triangles = stations.map((station, index) => {
+    const size = 18;
+    return new Path(
+      new Shape()
+        .moveTo(station.x, station.y - size)
+        .lineTo(station.x + size * 0.87, station.y + size * 0.5)
+        .lineTo(station.x - size * 0.87, station.y + size * 0.5)
+        .close(),
+      { fill: stationColorProperty(index) },
+    );
+  });
+  const star = new Path(new StarShape({ outerRadius: 22, innerRadius: 10 }), {
+    fill: SeismologyLabColors.truthColorProperty,
+    x: epicenter.x,
+    y: epicenter.y,
+  });
+  const globe = new Node({
+    children: [earth, ...rings, ...triangles, star],
+    clipArea: Shape.circle(center.x, center.y, radius),
+  });
+  return iconFrom(new Node({ children: [background(), globe] }));
 }
