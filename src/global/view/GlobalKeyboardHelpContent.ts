@@ -1,5 +1,5 @@
 /**
- * SimKeyboardHelpContent.ts
+ * GlobalKeyboardHelpContent.ts
  *
  * Content for the keyboard-help dialog (the "?" button in the navigation bar).
  * The template's only interactions are buttons and Reset All, so a single
@@ -14,7 +14,7 @@ import {
   TwoColumnKeyboardHelpContent,
 } from "scenerystack/scenery-phet";
 
-export class SimKeyboardHelpContent extends TwoColumnKeyboardHelpContent {
+export class GlobalKeyboardHelpContent extends TwoColumnKeyboardHelpContent {
   public constructor() {
     const leftColumn = [new BasicActionsKeyboardHelpSection()];
 

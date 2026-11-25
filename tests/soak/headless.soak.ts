@@ -12,15 +12,15 @@
 
 import { StringProperty } from "scenerystack/axon";
 import { Tandem } from "scenerystack/tandem";
-// seed:soak-imports:start
-import SimColors from "../../src/SimColors.js";
-import { SimScreen } from "../../src/sim-screen/SimScreen.js";
-// seed:soak-imports:end
+import { GlobalScreen } from "../../src/global/GlobalScreen.js";
+import { RegionalScreen } from "../../src/regional/RegionalScreen.js";
+import SeismologyLabColors from "../../src/SeismologyLabColors.js";
 import { describeHeadlessSoak } from "../helpers/headlessSoak.js";
 
 describeHeadlessSoak({
-  // seed:soak-screens:start
-  screens: () => [new SimScreen({ name: new StringProperty("Sim"), tandem: Tandem.OPT_OUT })],
-  tracked: () => ({ SimColors }),
-  // seed:soak-screens:end
+  screens: () => [
+    new RegionalScreen({ name: new StringProperty("Regional"), tandem: Tandem.OPT_OUT }),
+    new GlobalScreen({ name: new StringProperty("Global"), tandem: Tandem.OPT_OUT }),
+  ],
+  tracked: () => ({ SeismologyLabColors }),
 });
