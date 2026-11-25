@@ -6,6 +6,11 @@ Locate an earthquake's epicenter from P–S arrival-time differences on real sei
 
 ## Features
 
+- **Real data**: six USGS-catalogued earthquakes, with seismograms from the CI, BK, AK, IU and II networks
+- **Regional** screen: pick P and S, turn S–P into distance with adjustable crustal wave speeds, and locate the epicenter
+- **Global** screen: the same method at teleseismic distances, using IASP91 travel-time curves
+- Check (miss distance only) and Reveal (USGS epicenter, theoretical arrivals, best fit of your circles)
+- Keyboard-operable pick and epicenter markers with spoken responses
 - English, Spanish, and French localization via `StringManager`
 - Default and projector color profiles
 - Progressive Web App (installable, offline-capable)
@@ -26,6 +31,7 @@ npm start        # dev server → http://localhost:5173
 |---|---|
 | `npm start` / `npm run dev` | Start Vite dev server |
 | `npm run build` | Type-check + production build → `dist/` |
+| `npm run build-data` | Re-download and regenerate the bundled seismic data (network + Java) |
 | `npm run preview` | Preview the production build locally |
 | `npm test` | Run Vitest unit tests (includes memory-leak suite) |
 | `npm run test:fuzz` | Optional Playwright fuzz smoke: pointer (`?fuzz`) + keyboard (`?fuzzBoard`), with `?ea`, 30s each |
