@@ -1,0 +1,66 @@
+{
+  "regional": [
+    {
+      "key": "ridgecrest2019",
+      "eventId": "ci38443183",
+      "networks": ["CI"],
+      "distKm": [80, 450],
+      "stations": 6,
+      "window": [-20, 160],
+      "band": [0.5, 8],
+      "sps": 20
+    },
+    {
+      "key": "napa2014",
+      "eventId": "nc72282711",
+      "networks": ["NC", "BK"],
+      "distKm": [80, 450],
+      "stations": 6,
+      "window": [-20, 160],
+      "band": [0.5, 8],
+      "sps": 20
+    },
+    {
+      "key": "anchorage2018",
+      "eventId": "ak20419010",
+      "networks": ["AK", "AT"],
+      "distKm": [80, 600],
+      "stations": 6,
+      "window": [-20, 200],
+      "band": [0.3, 5],
+      "sps": 20
+    }
+  ],
+  "global": [
+    {
+      "key": "tohoku2011",
+      "eventId": "official20110311054624120_30",
+      "networks": ["IU", "II"],
+      "distDeg": [25, 95],
+      "stations": 6,
+      "window": [-60, 1800],
+      "band": [0.02, 1],
+      "sps": 2
+    },
+    {
+      "key": "nepal2015",
+      "eventId": "us20002926",
+      "networks": ["IU", "II"],
+      "distDeg": [25, 95],
+      "stations": 6,
+      "window": [-60, 1800],
+      "band": [0.02, 1],
+      "sps": 2
+    },
+    {
+      "key": "chile2010",
+      "eventId": "official20100227063411530_30",
+      "networks": ["IU", "II"],
+      "distDeg": [25, 95],
+      "stations": 6,
+      "window": [-60, 1800],
+      "band": [0.02, 1],
+      "sps": 2
+    }
+  ]
+}
